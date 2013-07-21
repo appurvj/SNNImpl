@@ -31,7 +31,7 @@ public class Dendrite {
 
 	//Sets the Decay Value Time & adjusts relaxation
 	public void setPotentialDecayTime(double valueDecayTime){
-		if(valueDecayTime > 0.0f){
+		if(valueDecayTime < 0.0f){
 			System.out.println("Decay time must be greater than 0");
                         return;
 		}
@@ -92,9 +92,11 @@ public class Dendrite {
 		return INTERNAL_PARAMETERS;		
 	}
 	//Gets the the actual parameters
-	public void getParameters(double opParameters[]){
-		opParameters[0]= this.weight;
-		opParameters[1]= this.potentialDecayTime;
+	public double[] getParameters(){
+            double opParams[] = new double[INTERNAL_PARAMETERS];
+            opParams[0]= this.weight;
+            opParams[1]= this.potentialDecayTime;
+            return opParams;
 	}
 	
 	//Sets the parameters and adjusts relaxation value

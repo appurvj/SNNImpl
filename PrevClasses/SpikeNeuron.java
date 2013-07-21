@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 
-public class Soma {
+public class SpikeNeuron {
 	
 	private static final int INTERNAL_PARAMETERS = 4;
 	ArrayList<Dendrite>dendrites = new ArrayList<Dendrite>();
@@ -12,14 +12,13 @@ public class Soma {
 	private double potentialRelaxation;
 	private double outputRelaxation;
 	private double inputValue;
-
 	private double refraction;		// n_0
 	private double potentialDecayTime;
 	private double outputDecayTime;
 	private double threshold; 
 	Dendrite dendrite;
 	
-	public Soma(int inputNum, double step){
+	public SpikeNeuron(int inputNum, double step){
 		this.step = step;
 		this.potential = 0.0f;
 		this.output = 0.0f;
@@ -34,6 +33,7 @@ public class Soma {
                     System.out.println("Step Must be greater than 0");
                     return;
                 }
+                
 		for(Dendrite dendrite:dendrites){
 			dendrite.setStep(step);
 		}
@@ -43,13 +43,13 @@ public class Soma {
 	
 	
 	//Handling the impulse - need to add array once created
-	public void handleImpulse(int input){
-            if(input < 0 || input > dendrites.size()){
+	public void handleImpulse(int dendriteNo){
+            if(dendriteNo < 0 || dendriteNo > dendrites.size()){
                 System.out.println("Invalid input index");
                 return;
             }
                 
-		dendrites.get(input).handleImpulse();
+		dendrites.get(dendriteNo).handleImpulse();
 	}
 	
 	//Sets the output decay 
@@ -68,7 +68,7 @@ public class Soma {
                     return;
             }
             this.potentialDecayTime = decayTime;
-            this.potentialRelaxation = (double) Math.exp(-this.step/this.outputDecayTime);            
+            this.potentialRelaxation = (double) Math.exp(-this.step/this.potentialDecayTime);            
         }
         
 	//sets the threshold
@@ -99,13 +99,51 @@ public class Soma {
                 }
 	}
         
+        public double evaluateParameters(){
+            double potential = 0;
+            for(Dendrite dendrite:dendrites)
+                potential += dendrite.evaluateParameters();
+            
+            potential += this.outputDecayTime > 0?0:1;
+            potential += this.potentialDecayTime > 0?0:1;
+            potential += this.refraction > 0?0:1;
+            potential += this.threshold > 0?0:1;
+            
+            return potential;
+        }
         
-        //getparameters count to be figured out
-	
-	//counts the parameters, must create inputs
-	public int getParametersCount(){
-		return dendrite.getParametersCount()*dendrites.size() +INTERNAL_PARAMETERS;
-	}
-	
+        
+        public void setParameters(ArrayList<double[]> params){
+            double[] thisParams = params.get(0);
+            this.outputDecayTime = thisParams[0];
+            this.potentialDecayTime = thisParams[1];
+            this.refraction = thisParams[2];
+            this.threshold = thisParams[3];
+            
+            this.outputRelaxation = Math.exp(-this.step/this.outputDecayTime);
+            this.potentialRelaxation = Math.exp(-this.step/this.potentialDecayTime);
+            
+            for(int i = 0; i < dendrites.size(); i++)
+                dendrites.get(i).setParameters(params.get(i+1));
+        }
+        
+        public ArrayList<double[]> getParameters(){
+            ArrayList<double[]> params = new ArrayList<double[]>();
+            double[] thisParams = new double[INTERNAL_PARAMETERS];
+            thisParams[0] = this.outputDecayTime;
+            thisParams[1] = this.potentialDecayTime;
+            thisParams[2] = this.refraction;
+            thisParams[3] = this.threshold;
+            params.add(thisParams);
+            
+            for(Dendrite dendrite:dendrites)
+                params.add(dendrite.getParameters());
+            
+            return params;
+        }	
+        
+        public boolean isImpulse(){
+            return output==1;
+        }
 	
 }
