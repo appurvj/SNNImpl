@@ -25,8 +25,13 @@ public class HiddenNeuron extends SpikeNeuron{
             throw new ListLengthsDifferentException();
     }
     
-    public void setParams(ArrayList<Double> weights){
-        this.weightList  = weights;
+    public void setParams(ArrayList<Double> params){
+        //the params list contains weights and thresholds as the last two in the list
+        this.spikeThreshhold = params.get(0);
+        this.reSpikeThreshhold = params.get(1);
+        params.remove(0);
+        params.remove(1);
+        this.weightList  = params;
     }
 
     @Override
