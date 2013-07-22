@@ -1,3 +1,6 @@
+
+import java.util.ArrayList;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -9,7 +12,7 @@
  * from Neuron in the Input, Hidden, and Output layers respectively.
  * @author Appurv Jain and Amrith Akula
  */
-public abstract class SpikeNeuron {
+public abstract class SpikeNeuron{
     public SNType neuronType;
     protected double axonPotential = 0;
     protected double potentialRelaxation;
@@ -18,13 +21,13 @@ public abstract class SpikeNeuron {
     protected final int layerNo;
     protected final int neuronNo;
 
-    public SpikeNeuron(SNType nType, double step, double potentialDecayTime, int layer, int neuron){
+    public SpikeNeuron(SNType nType, double step, int layer, int neuron){
         neuronType = nType; 
         this.step = step;
-        this.potentialDecayTime = potentialDecayTime;
         this.potentialRelaxation = Math.exp(-this.step/this.potentialDecayTime);
         this.layerNo = layer;
         this.neuronNo = neuron;
+        setPotentialDecayTime(1);
         
     }
     
@@ -50,12 +53,11 @@ public abstract class SpikeNeuron {
         return neuronType;
     }
     
-    public void reset(){
-        this.axonPotential = 0;
-    }
     
     
+    public abstract void reset();
     public abstract void update();
+    public abstract void setParams(ArrayList<Double> params) throws ListLengthsDifferentException;
     
     
 }

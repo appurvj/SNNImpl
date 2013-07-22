@@ -1,3 +1,6 @@
+
+import java.util.ArrayList;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -11,8 +14,8 @@
  */
 public class InputNeuron extends SpikeNeuron{
        
-    public InputNeuron(double step, double potentialDecayTime, int layer, int neuron){
-        super(SNType.INPUT, step, potentialDecayTime, layer, neuron);
+    public InputNeuron(double step, int layer, int neuron){
+        super(SNType.INPUT, step, layer, neuron);
     }
     
             
@@ -23,7 +26,11 @@ public class InputNeuron extends SpikeNeuron{
 
     
     public void reset(){
-        super.reset();
+        super.axonPotential = 0;
+    }
+    
+    public void setParams(ArrayList<Double> params) throws ListLengthsDifferentException{
+        this.potentialDecayTime = params.get(0);
     }
     
 }
