@@ -18,7 +18,7 @@ public class HiddenNeuron extends SpikeNeuron{
         this.preSynapticNeurons = preNeurons;
     }
     
-    
+    @Override
     public void setParams(ArrayList<Double> params) throws ListLengthsDifferentException{
         //the params list contains weights and thresholds as the last two in the list
         this.potentialDecayTime = params.get(0);
@@ -45,7 +45,14 @@ public class HiddenNeuron extends SpikeNeuron{
                 return;
             }
         }
-    }   
+    }
+    
+    
+    @Override
+    public void reset(){
+        super.axonPotential = 0;
+        this.internalPotential = 0;
+    }
 }
 
 

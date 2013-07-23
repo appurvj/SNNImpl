@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * responsible for differential evolution while running the network.
  * @author Appurv Jain and   Amrith Akula
  */
-public class SNNClassifierNetwork {
+public class SNNClassifier {
     //Network in the form of a list of arrays will cleaner than a single list
     //Each array will represent a layer (input, hidden, output)
     
@@ -21,7 +21,7 @@ public class SNNClassifierNetwork {
     //Array of lists - will include the weights and threshholds
     //private ArrayList<Double>[] params; 
     
-    public  SNNClassifierNetwork(int[] layerSize){
+    public  SNNClassifier(int[] layerSize){
         this.OUTPUT_LAYER = layerSize.length - 1;
         network = new ArrayList<SpikeNeuron[]>(layerSize.length);
         
@@ -48,7 +48,7 @@ public class SNNClassifierNetwork {
     
     
     
-    public void setInputs(double[] input) throws ListLengthsDifferentException{
+    private void setInputs(double[] input) throws ListLengthsDifferentException{
         SpikeNeuron[] inputLayer = this.network.get(INPUT_LAYER);
         if(input.length != inputLayer.length)
             throw new ListLengthsDifferentException();
@@ -75,7 +75,15 @@ public class SNNClassifierNetwork {
     }
     
     
-    public int run(){
+    public int run(double[] input)throws ListLengthsDifferentException{
+        this.reset();
+        
+        try{
+            this.setInputs(input);
+        }catch(ListLengthsDifferentException e){
+            throw e;
+        }
+        
         int itr = this.MAX_ITERATIONS;
         while(itr-- > 0){
             for(SpikeNeuron[] layer:network){
@@ -94,11 +102,11 @@ public class SNNClassifierNetwork {
         return -1;   
     }
     
+    
     public void reset(){
-        for(SpikeNeuron[] layer: this.network){
-            for(SpikeNeuron neuron: layer){
+        for(SpikeNeuron[] layer: this.network)
+            for(SpikeNeuron neuron: layer)
                 neuron.reset();
-            }
-        }
     }
+    
 }
