@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+
 /**
  *
  * @author Appurv_Air
@@ -6,12 +7,13 @@ import java.util.ArrayList;
 public class HiddenNeuron extends SpikeNeuron{
     protected double reSpikeThreshhold;
     protected double spikeThreshhold;
-    protected SpikeNeuron[] preSynapticNeurons;
-    protected Double[] weightList;
+    protected ArrayList<SpikeNeuron> preSynapticNeurons;
+    protected ArrayList<Double> weightList;
     protected double internalPotential = 0;
+    public static final int OTHER_PARAMS = 3;
     
     
-    public HiddenNeuron(double step, SpikeNeuron[] preNeurons, 
+    public HiddenNeuron(double step, ArrayList<SpikeNeuron> preNeurons, 
             int layer, int neuron) {  
         
         super(SNType.HIDDEN, step, layer, neuron);
@@ -21,14 +23,15 @@ public class HiddenNeuron extends SpikeNeuron{
     @Override
     public void setParams(ArrayList<Double> params) throws ListLengthsDifferentException{
         //the params list contains weights and thresholds as the last two in the list
-        this.potentialDecayTime = params.get(0);
-        this.spikeThreshhold = params.get(1);
-        this.reSpikeThreshhold = params.get(2);
+        ArrayList<Double> newList = new ArrayList<Double>(params);
+        this.potentialDecayTime = newList.get(0);
+        this.spikeThreshhold = newList.get(1);
+        this.reSpikeThreshhold = newList.get(2);
         for(int i = 0; i < 3; i++)
-            params.remove(0);
-        this.weightList  = params.toArray(weightList);
-        if(this.weightList.length != this.preSynapticNeurons.length)
-            throw new ListLengthsDifferentException(" List lengths dont match in setParams");
+            newList.remove(0);
+        this.weightList  = newList;
+        if(this.weightList.size() != this.preSynapticNeurons.size())
+            throw new ListLengthsDifferentException(" List lengths dont match in setParams of Hidden Neuron");
     }
 
     @Override
@@ -36,9 +39,9 @@ public class HiddenNeuron extends SpikeNeuron{
         super.axonPotential *= super.potentialRelaxation;
         if(super.axonPotential >= this.reSpikeThreshhold)
             return;
-        for(int i = 0; i < this.weightList.length; i++){
-            this.internalPotential += this.weightList[i]
-                    * this.preSynapticNeurons[i].axonPotential;
+        for(int i = 0; i < this.weightList.size(); i++){
+            this.internalPotential += this.weightList.get(i)
+                    * this.preSynapticNeurons.get(i).axonPotential;
             if(this.internalPotential > this.spikeThreshhold){
                 super.axonPotential = 1;
                 this.internalPotential = 0;                
@@ -52,7 +55,10 @@ public class HiddenNeuron extends SpikeNeuron{
     public void reset(){
         super.axonPotential = 0;
         this.internalPotential = 0;
+        this.spiked = false;
+    }
+    
+    public boolean hasSpiked(){
+        return spiked;
     }
 }
-
-

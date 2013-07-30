@@ -1,11 +1,6 @@
 
 import java.util.ArrayList;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * This class captures the functionality of the neurons that will serve as input
  * neurons. Input neurons will not spike. They will just have a leaky output
@@ -31,6 +26,5 @@ public class InputNeuron extends SpikeNeuron{
     
     public void setParams(ArrayList<Double> params) throws ListLengthsDifferentException{
         this.potentialDecayTime = params.get(0);
-    }
-    
+    }    
 }

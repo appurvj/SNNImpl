@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -19,10 +20,11 @@ public class Data {
     public  double[][] testInput;
     public  int[] testClass;
     public int totalInputCols;
-    public  double TRAINING_SPLIT = 0.7;
+    public  double trainingRatio;
     
-    public Data(String dataPath, int classifierCol) 
+    public Data(String dataPath, int classifierCol, double trainRat) 
             throws FileNotFoundException, IOException{
+        this.trainingRatio = trainRat;
         BufferedReader file = new BufferedReader(new FileReader(dataPath));
 
         ArrayList<String> dataList = new ArrayList<String>();
@@ -33,12 +35,13 @@ public class Data {
             row = file.readLine();
         }
         shuffle(dataList);
+        shuffle(dataList);
        
-        int lastTrainRowIndex = (int)(dataList.size()*this.TRAINING_SPLIT);
-System.out.println("lastRowIndex Calculated " + lastTrainRowIndex);
+        int lastTrainRowIndex = (int)(dataList.size()*this.trainingRatio);
+System.out.println("Total Training Values : " + lastTrainRowIndex);
 
         
-System.out.println("total cols obtained : " + totalCols);
+System.out.println("Total cols identified : " + totalCols);
         this.totalInputCols = totalCols - 1; 
         
         this.trainingInput = new double[lastTrainRowIndex + 1][this.totalInputCols];
@@ -68,8 +71,10 @@ System.out.println("total cols obtained : " + totalCols);
             for(int j = 0; j < indivCols.length; j++){
                 if(j == classifierCol)
                     this.testClass[i - testRowIndex] = Integer.parseInt(indivCols[j]);
-                else
-                    this.testInput[i - testRowIndex][colIndex++] = Double.parseDouble(indivCols[j]);                
+                else{
+                   BigDecimal num = new BigDecimal(indivCols[j]);   
+                    this.testInput[i - testRowIndex][colIndex++] = num.doubleValue();
+                }
             }
         }
         

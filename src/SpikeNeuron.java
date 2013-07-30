@@ -1,11 +1,6 @@
 
 import java.util.ArrayList;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * This is an abstract class meant to capture the basic features required in any 
  * neuron. This will later be extended to accommodate the different requirements
@@ -20,6 +15,7 @@ public abstract class SpikeNeuron{
     protected double potentialDecayTime;
     protected final int layerNo;
     protected final int neuronNo;
+    public boolean spiked = false;
 
     public SpikeNeuron(SNType nType, double step, int layer, int neuron){
         neuronType = nType; 
@@ -54,10 +50,8 @@ public abstract class SpikeNeuron{
     }
     
     
-    
     public abstract void reset();
     public abstract void update();
     public abstract void setParams(ArrayList<Double> params) throws ListLengthsDifferentException;
-    
-    
+      
 }

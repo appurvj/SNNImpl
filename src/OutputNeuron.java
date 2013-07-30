@@ -1,4 +1,7 @@
 
+import java.util.ArrayList;
+
+
 /**
  * Captures the functionality of the neurons that will be make up the outputl
  * layer of the network. Since we are building a classifier, the class of the 
@@ -7,8 +10,7 @@
  * @author Appurv Jain, Amrith
  */
 public class OutputNeuron extends HiddenNeuron {    
-    protected boolean spiked = false;
-    public OutputNeuron(double step, SpikeNeuron[] preNeurons, 
+    public OutputNeuron(double step, ArrayList<SpikeNeuron> preNeurons, 
              int layer, int neuron){
 
         super(step, preNeurons, layer, neuron);
@@ -18,9 +20,9 @@ public class OutputNeuron extends HiddenNeuron {
     
 @Override
     public void update(){
-        for(int i = 0; i < this.weightList.length; i++){
-            this.internalPotential += this.weightList[i]
-                    * this.preSynapticNeurons[i].axonPotential;
+        for(int i = 0; i < this.weightList.size(); i++){
+            this.internalPotential += this.weightList.get(i)
+                    * this.preSynapticNeurons.get(i).axonPotential;
             if(this.internalPotential > this.spikeThreshhold){
                 this.spiked = true;
                 return;
@@ -28,15 +30,5 @@ public class OutputNeuron extends HiddenNeuron {
         }
     }
 
-@Override
-    public void reset(){
-        super.reset();
-        this.spiked = false;
-    }
-
-
-    public boolean hasSpiked(){
-        return spiked;
-    }
 
 }
