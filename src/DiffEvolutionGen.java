@@ -3,15 +3,17 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- *
+ * This class is is used to generate populations of input parameters for the 
+ * network. 
+ * 
  * @author Appurv Jain and Amrith Akula
  */
 public class DiffEvolutionGen {
     public static final double MIN_VAL = 0.000000000000001;
     public static final double OFFSET = 0.1;
-    public static final int POPULATION_SIZE = 20;
+    public static final int POPULATION_SIZE = 25;
     public static final double MAX_JUMP = 0.5;
-    public static final double MUTATION_PROB = 0.3;
+    public static final double MUTATION_PROB = 0.2;
     
     private int[] layerSize;
     private Random randGen = new Random();
@@ -21,7 +23,11 @@ public class DiffEvolutionGen {
             = new ArrayList<ArrayList<ArrayList<ArrayList<Double>>>> (POPULATION_SIZE);
 
     
-
+    /**
+     * Generates a random population
+     * 
+     * @param layerSizes: Array of sizes of layers
+     */
     DiffEvolutionGen(int[] layerSizes) {
         this.layerSize = layerSizes;
         for(int i = 0; i < DiffEvolutionGen.POPULATION_SIZE; i++){
@@ -29,11 +35,17 @@ public class DiffEvolutionGen {
         }
     }
 
+    
+    
     ArrayList<ArrayList<ArrayList<ArrayList<Double>>>> getCurrPopulation() {
         return this.population;
     }
 
 
+    /**
+     * Generate a new generation from the current population
+     * @return 
+     */
     public ArrayList<ArrayList<ArrayList<ArrayList<Double>>>>
             generateNewGen(){
         ArrayList<ArrayList<ArrayList<ArrayList<Double>>>> newGen
@@ -50,9 +62,9 @@ public class DiffEvolutionGen {
         
         
         ArrayList<ArrayList<Double>> singleLayerParam
-                = new ArrayList<ArrayList<Double>>(this.layerSize[SNNClassifierNetwork.INPUT_LAYER_INDEX]);
+                = new ArrayList<ArrayList<Double>>(this.layerSize[SNClassifierNetwork.INPUT_LAYER_INDEX]);
         ArrayList<Double> singleNeuronParam;
-        for(int i = 0; i < this.layerSize[SNNClassifierNetwork.INPUT_LAYER_INDEX]; i++){
+        for(int i = 0; i < this.layerSize[SNClassifierNetwork.INPUT_LAYER_INDEX]; i++){
             singleNeuronParam = new ArrayList(1);
             singleNeuronParam.add(this.randGen.nextDouble() + DiffEvolutionGen.MIN_VAL);
             singleLayerParam.add(singleNeuronParam);            
@@ -75,6 +87,12 @@ public class DiffEvolutionGen {
         return newIndiv;
     }
     
+    
+    /**
+     * Generates a new individial 'close' to the parent in features. 
+     * @param parent
+     * @return 
+     */
     private ArrayList<ArrayList<ArrayList<Double>>> 
             generateChild(ArrayList<ArrayList<ArrayList<Double>>> parent){
         if(mutationGen.nextDouble() < DiffEvolutionGen.MUTATION_PROB)

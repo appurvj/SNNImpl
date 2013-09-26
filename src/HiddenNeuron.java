@@ -1,8 +1,10 @@
 import java.util.ArrayList;
 
 /**
- *
- * @author Appurv_Air
+ * This class simulates the functionality of a neuron in the hidden layer of the 
+ * network. These neurons keep on 'accumulating' the potential from the neurons 
+ * feeding them till they cross a threshold and fire.
+ * @author Appurv Jain and Amrith Akula
  */
 public class HiddenNeuron extends SpikeNeuron{
     protected double reSpikeThreshhold;
@@ -20,9 +22,14 @@ public class HiddenNeuron extends SpikeNeuron{
         this.preSynapticNeurons = preNeurons;
     }
     
+    
+    /**
+     * This method sets the weights and thresholds of the neuron.
+     * The params list contains decay time and thresholds at the start of the
+     * list followed by the dendrite weights.
+     */
     @Override
     public void setParams(ArrayList<Double> params) throws ListLengthsDifferentException{
-        //the params list contains weights and thresholds as the last two in the list
         ArrayList<Double> newList = new ArrayList<Double>(params);
         this.potentialDecayTime = newList.get(0);
         this.spikeThreshhold = newList.get(1);
@@ -34,6 +41,14 @@ public class HiddenNeuron extends SpikeNeuron{
             throw new ListLengthsDifferentException(" List lengths dont match in setParams of Hidden Neuron");
     }
 
+    
+    
+    /**
+     * Updates the internal potential and spikes the neuron if internal potential
+     * is above threshold. When neuron fires, the axon potential becomes 1 and
+     * the internal potential becomes 0 again. After firing once, the neuron will
+     * not update till the axon potential falls below a certain threshold.
+     */
     @Override
     public void update() {
         super.axonPotential *= super.potentialRelaxation;
@@ -50,7 +65,9 @@ public class HiddenNeuron extends SpikeNeuron{
         }
     }
     
-    
+    /**
+     * Reset neuron potential values
+     */
     @Override
     public void reset(){
         super.axonPotential = 0;

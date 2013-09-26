@@ -3,15 +3,15 @@ import java.util.ArrayList;
 
 /**
  * This class uses controls the differential evolution based parameter generation
- * based on the accuracies obtained by running it through the SNN. This class
- * is where the learning takes place and is controlled.
+ * based on the accuracies obtained by running it through the SNClassifierNetwork. 
+ * This class is where the learning takes place and is controlled.
  * 
  * @author Appurv Jain and Amrith Akula
  */
 public class SNNLearningController {
     public static int newSolnCount = 0;
     private DiffEvolutionGen networkParamGen;
-    private SNNClassifierNetwork network;
+    private SNClassifierNetwork network;
     private Data data;
     private long count = 0;
     
@@ -25,7 +25,7 @@ public class SNNLearningController {
     
     public SNNLearningController(int[] layerSizes, Data data) 
             throws ListLengthsDifferentException{
-        this.network = new SNNClassifierNetwork(layerSizes);
+        this.network = new SNClassifierNetwork(layerSizes);
         this.data = data;
         this.networkParamGen = new DiffEvolutionGen(layerSizes);
         this.initpopulationAccuracies();
@@ -73,9 +73,9 @@ public class SNNLearningController {
     private void runNewGeneration() 
             throws ListLengthsDifferentException{
         
-if(++count%5000 == 0)
-System.out.println("Running Generation: " + count + "  Curr Best Accuracy: " 
-        + this.bestIndivAccuracy  + "\n Curr Accuracies List: " + this.currAccuracies);
+//if(++count%5000 == 0)
+//System.out.println("Running Generation: " + count + "  Curr Best Accuracy: " 
+  //      + this.bestIndivAccuracy  + "\n Curr Accuracies List: " + this.currAccuracies);
         ArrayList<Double> accuracyList = new ArrayList<Double>();
         ArrayList<ArrayList<ArrayList<ArrayList<Double>>>> newGen;
         newGen = this.networkParamGen.generateNewGen();
@@ -92,7 +92,15 @@ System.out.println("Running Generation: " + count + "  Curr Best Accuracy: "
                 this.currAccuracies.set(i, accuracyList.get(i));
                 this.networkParamGen.replaceIndiv(i, newGen.get(i));
                 if(accuracyList.get(i) > this.bestIndivAccuracy){
-System.out.println("Found Better Solution: " + ++newSolnCount + ", Accuracy: " + accuracyList.get(i));
+//System.out.printf("Found Better Solution: " + ++newSolnCount + ", Accuracy: " + accuracyList.get(i));
+                    double solnTime = ((double)(System.currentTimeMillis() - Main.time)/1000);
+System.out.printf("Found Better Solution: %d, Accuracy: %.3f ",++newSolnCount, accuracyList.get(i));
+if(solnTime > 3600)
+    System.out.printf(", %.3f hours\n", solnTime/(3600));
+else if(solnTime > 60)
+    System.out.printf(", %.3f minutes\n" ,solnTime/60);
+else
+    System.out.printf( ", %.3f seconds\n",solnTime);
                     this.bestIndiv = newGen.get(i);
                     this.bestIndivAccuracy = accuracyList.get(i);
                 }

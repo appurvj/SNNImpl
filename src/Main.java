@@ -9,25 +9,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
- *
- * @author Appurv_Air
+ * This is the main class that runs the entire program
+ * @author Appurv Jain ans Amrith Akula
  */
 public class Main {    
-    static int[] hiddenLayerSize = {10,8};
+    static int[] hiddenLayerSize = {5};
     static int totalSize = hiddenLayerSize.length + 2; //a layer each for input and output
     static int[] layerSize = new int[totalSize];
     static int NO_OF_RUNS = 30000;
-    static double MIN_ACCURACY = 0.95;
+    static double MIN_ACCURACY = 0.75;
     static String dataFolder = "/Users/Appurv_Air/Dropbox/Coursework/CurrentCourses/AI/SNNCode/SNNImpl/src/";
-    static String dataLocn = "irisModified.data";//"irisModified.data";
-    static int CLASSIFIER_COL = 4;
-    static double TRAINING_RATIO = 0.5;
+    static String dataLocn = "TelaguVowel.txt";//"irisModified.data";
+    static int CLASSIFIER_COL = 0;
+    static double TRAINING_RATIO = 0.6;
+    public static long time;
     
     
     public static void main(String[] args){ 
@@ -42,17 +39,24 @@ public class Main {
             for(int value: data.trainingClass)
                 trainingClassSet.add(value);
             int classSetSize = trainingClassSet.size();
-System.out.println("Class Set Size: " + classSetSize);
+System.out.println("Number of Classes: " + classSetSize);
             Main.layerSize[totalSize - 1] = classSetSize;
             SNNLearningController classifier = new SNNLearningController(Main.layerSize, data);
-            long time = System.currentTimeMillis();
+            Main.time = System.currentTimeMillis();
             //classifier.run(NO_OF_RUNS);
             classifier.runTillAccuracy(MIN_ACCURACY);
    
             Toolkit.getDefaultToolkit().beep();
             System.out.println("Training Accuracy: " + classifier.getBestAccuracy());
             System.out.println("Test Accuracy: " + classifier.getTestAccuracy(classifier.getBestIndiv()));
-            System.out.println("Time Taken : " + ((System.currentTimeMillis() - time)/1000) + " seconds" );
+            long runTime = (System.currentTimeMillis() - time)/1000;
+            System.out.print("Time Taken : " );
+            if(runTime > 3600)
+                System.out.printf("%.3f hours\n", runTime/(3600));
+            else if(runTime > 60)
+                System.out.printf("%.3f minutes\n" ,runTime/60);
+            else
+                System.out.printf( "%.3f seconds\n",runTime);
        
             
             

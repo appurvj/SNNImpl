@@ -3,11 +3,13 @@ import java.util.ArrayList;
 
 
 /**
- * Captures the functionality of the neurons that will be make up the outputl
- * layer of the network. Since we are building a classifier, the class of the 
+ * Captures the functionality of the neurons that will be make up the output
+ * layer of the network. These are just include a minor mutation from Hidden 
+ * Neurons. Since we are building a classifier, the class of the 
  * input is decided by the first firing output neuron. Therefore, the output
  * neurons will only fire once.
- * @author Appurv Jain, Amrith
+ * 
+ * @author Appurv Jain and Amrith Akula
  */
 public class OutputNeuron extends HiddenNeuron {    
     public OutputNeuron(double step, ArrayList<SpikeNeuron> preNeurons, 

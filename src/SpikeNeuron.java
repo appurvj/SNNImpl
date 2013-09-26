@@ -5,8 +5,11 @@ import java.util.ArrayList;
  * This is an abstract class meant to capture the basic features required in any 
  * neuron. This will later be extended to accommodate the different requirements
  * from Neuron in the Input, Hidden, and Output layers respectively.
+ * 
  * @author Appurv Jain and Amrith Akula
  */
+
+
 public abstract class SpikeNeuron{
     public SNType neuronType;
     protected double axonPotential = 0;
@@ -26,6 +29,10 @@ public abstract class SpikeNeuron{
         setPotentialDecayTime(1);
         
     }
+    
+    /* 
+     * Below are some setter abd getter methods
+     */
     
     public void setPotentialDecayTime(double potDecT){
         if(potDecT < 0){
@@ -50,6 +57,12 @@ public abstract class SpikeNeuron{
     }
     
     
+    /*
+     * The methods listed below would perform diffrent functions based on 
+     * whether the neuron is at the input layer, hidden layer or output layer.
+     * Therefore, these have been left as abstract and will be overridden in 
+     * the derived classes
+     */
     public abstract void reset();
     public abstract void update();
     public abstract void setParams(ArrayList<Double> params) throws ListLengthsDifferentException;

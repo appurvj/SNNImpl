@@ -4,34 +4,43 @@ import java.util.ArrayList;
 
 /**
  * This class simulates a network of spike neurons. All the functionality of the
- * network is captured in this class. This class will interact with the class 
- * responsible for differential evolution while running the network.
+ * network is captured in this class. This class is one of the main components
+ * of the system and is the underlying model behind the operation of the program.
+ * 
  * @author Appurv Jain and  Amrith Akula
  */
-public class SNNClassifierNetwork {
-    //Network in the form of a list of arrays will cleaner than a single list
-    //Each array will represent a layer (input, hidden, output)
+public class SNClassifierNetwork {
+    //Network in the form of a list of arrays is cleaner than a single list
+    //Each array list will represent a layer (input/hidden/output)
     
     public static final double STEP = 0.5;
     public static final int INPUT_LAYER_INDEX = 0;
     public final int OUTPUT_LAYER;
     public static final int MAX_ITERATIONS = 250;
+    
+    //List of lists - will include the weights and threshholds
     private ArrayList<ArrayList<SpikeNeuron>> network; 
     
-    //Array of lists - will include the weights and threshholds
-    //private ArrayList<Double>[] params; 
     
-    public  SNNClassifierNetwork(int[] layerSize){
+    /**
+     * The constructor generates and initializes the network based on the 
+     * dimensions provided. It also links the neurons in a particular layer as
+     * inputs for the next layer
+     * @param layerSize : Array containing sizes of the network layers
+     */
+    public  SNClassifierNetwork(int[] layerSize){
         this.OUTPUT_LAYER = layerSize.length - 1;
         network = new ArrayList<ArrayList<SpikeNeuron>>(layerSize.length);
         
         //Create an array for input neuron layer
         ArrayList<SpikeNeuron> neuronLayer = new ArrayList<SpikeNeuron>(layerSize[this.INPUT_LAYER_INDEX]);
         
+        //Generate input layer and add to network
         for(int i = 0; i < layerSize[this.INPUT_LAYER_INDEX]; i++)
             neuronLayer.add(new InputNeuron(STEP, this.INPUT_LAYER_INDEX, i));
         network.add(neuronLayer);
         
+        //Generate hidden layer(s) and add to network
         for(int i = 1; i < this.OUTPUT_LAYER; i++){
             neuronLayer = new ArrayList<SpikeNeuron>(layerSize[i]);
             for(int j = 0; j < layerSize[i]; j++)
@@ -39,6 +48,7 @@ public class SNNClassifierNetwork {
             network.add(neuronLayer);
         }
         
+        //Generate output layer and add to network
         neuronLayer = new ArrayList<SpikeNeuron>(layerSize[this.OUTPUT_LAYER]);
         for(int i = 0; i < layerSize[this.OUTPUT_LAYER]; i++)
             neuronLayer.add(new OutputNeuron(STEP, network.get(this.OUTPUT_LAYER - 1),
@@ -59,11 +69,7 @@ public class SNNClassifierNetwork {
     }
     
     /*
-     * Params are stored in the following form:
-     * An array of lists of neuron params;each neuron param is also a list
-     * Every element in the array represents the combined params of a single layer,
-     * Each list (except input) will include decayTime, threshholds and weights
-     * Input layer params consist solely of decay time
+     * Set the paramaters of the the network
      */
     public void setParams(ArrayList<ArrayList<ArrayList<Double>>> params)throws ListLengthsDifferentException{
         for(int i = 0; i < params.size(); i++){
@@ -79,7 +85,12 @@ public class SNNClassifierNetwork {
         }
     }
     
-    
+    /**
+     * This methods runs the network for the set input and returns the number
+     * @param input
+     * @return
+     * @throws ListLengthsDifferentException 
+     */
     public int run(double[] input)throws ListLengthsDifferentException{
         this.reset();
         
