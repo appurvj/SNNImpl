@@ -1,4 +1,5 @@
 
+import java.awt.Toolkit;
 import java.util.ArrayList;
 
 /**
@@ -22,7 +23,12 @@ public class SNNLearningController {
     private ArrayList<ArrayList<ArrayList<Double>>> bestIndiv;
     private double bestIndivAccuracy = 0;
     
-    
+    /**
+     * Constructor: Sets class parameters and initializes accuracies
+     * @param layerSizes
+     * @param data
+     * @throws ListLengthsDifferentException 
+     */
     public SNNLearningController(int[] layerSizes, Data data) 
             throws ListLengthsDifferentException{
         this.network = new SNClassifierNetwork(layerSizes);
@@ -31,7 +37,12 @@ public class SNNLearningController {
         this.initpopulationAccuracies();
     }
     
-    
+    /**
+     * Calculates training accuracies for the data
+     * @param params: network parameters
+     * @return
+     * @throws ListLengthsDifferentException 
+     */
     public double getTrainAccuracy(ArrayList<ArrayList<ArrayList<Double>>> params) 
             throws ListLengthsDifferentException{
         network.setParams(params);
@@ -44,6 +55,12 @@ public class SNNLearningController {
         return currAccuracy;
     }
     
+    /**
+     * Calculates test accuracies for the data
+     * @param params: network parameters
+     * @return
+     * @throws ListLengthsDifferentException 
+     */
     public double getTestAccuracy(ArrayList<ArrayList<ArrayList<Double>>> params) throws ListLengthsDifferentException{
         network.setParams(params);
         double currAccuracy = 1;
@@ -55,7 +72,10 @@ public class SNNLearningController {
         return currAccuracy;        
     }
     
-    
+    /**
+     * Initializes population accuracies to accuracies of initial population
+     * @throws ListLengthsDifferentException 
+     */
     private void initpopulationAccuracies() 
             throws ListLengthsDifferentException{
         double currAccuracy;
@@ -69,13 +89,13 @@ public class SNNLearningController {
         }
     }
     
-    
+    /**
+     * Calculates accuracies for the new generation and makes replacements
+     * in case of individuals that perform better than corresponding parents
+     * @throws ListLengthsDifferentException 
+     */
     private void runNewGeneration() 
             throws ListLengthsDifferentException{
-        
-//if(++count%5000 == 0)
-//System.out.println("Running Generation: " + count + "  Curr Best Accuracy: " 
-  //      + this.bestIndivAccuracy  + "\n Curr Accuracies List: " + this.currAccuracies);
         ArrayList<Double> accuracyList = new ArrayList<Double>();
         ArrayList<ArrayList<ArrayList<ArrayList<Double>>>> newGen;
         newGen = this.networkParamGen.generateNewGen();
@@ -84,7 +104,11 @@ public class SNNLearningController {
         this.makeAppropriateReplacements(newGen, accuracyList);
     }
     
-    
+    /**
+     * Replaces individuals whose accuracies are worse than their children
+     * @param newGen: New generation of individuals(network weights)
+     * @param accuracyList: list of accuracies for the new generation
+     */
     private void makeAppropriateReplacements
             (ArrayList<ArrayList<ArrayList<ArrayList<Double>>>> newGen,ArrayList<Double> accuracyList) {
         for(int i = 0; i < accuracyList.size(); i++){
@@ -92,15 +116,12 @@ public class SNNLearningController {
                 this.currAccuracies.set(i, accuracyList.get(i));
                 this.networkParamGen.replaceIndiv(i, newGen.get(i));
                 if(accuracyList.get(i) > this.bestIndivAccuracy){
-//System.out.printf("Found Better Solution: " + ++newSolnCount + ", Accuracy: " + accuracyList.get(i));
                     double solnTime = ((double)(System.currentTimeMillis() - Main.time)/1000);
+//For debugging
 System.out.printf("Found Better Solution: %d, Accuracy: %.3f ",++newSolnCount, accuracyList.get(i));
-if(solnTime > 3600)
-    System.out.printf(", %.3f hours\n", solnTime/(3600));
-else if(solnTime > 60)
-    System.out.printf(", %.3f minutes\n" ,solnTime/60);
-else
-    System.out.printf( ", %.3f seconds\n",solnTime);
+Main.displayTime(solnTime);
+if(solnTime>60)
+Toolkit.getDefaultToolkit().beep();
                     this.bestIndiv = newGen.get(i);
                     this.bestIndivAccuracy = accuracyList.get(i);
                 }
@@ -108,26 +129,57 @@ else
         }
     }
     
+    /*
+     * Getter for best network parameters
+     */
     public ArrayList<ArrayList<ArrayList<Double>>> getBestIndiv(){
         return this.bestIndiv;
     }
+
     
+    /*
+     * Getter for best Accuracy corresponding to the best netwrok parameters
+     */
     public double getBestAccuracy(){
         return this.bestIndivAccuracy;
     }
     
+    
+    /**
+     * Runs the learning algorithm for the number of minutes specified
+     * @param mins: Number of minutes
+     * @throws ListLengthsDifferentException 
+     */
+    public void runForMins(int mins) throws ListLengthsDifferentException{
+        long time = System.currentTimeMillis();
+        while((System.currentTimeMillis() - time) < (mins * 60000))
+            this.runNewGeneration();
+    }
+    
+    
+    /**
+     * Runs the program till the required training accuracy is achieved
+     * @param minAccuracy
+     * @throws ListLengthsDifferentException 
+     */
     public void runTillAccuracy(double minAccuracy) throws ListLengthsDifferentException{
         while(this.bestIndivAccuracy < minAccuracy)
             this.runNewGeneration();
     }
     
-    
+    /**
+     * Runs program till ideal min training accuracy is reached
+     * @throws ListLengthsDifferentException 
+     */
     public void run() throws ListLengthsDifferentException{
-        while(this.bestIndivAccuracy < this.IDEAL_MIN_ACCURACY)
-            this.runNewGeneration();
+        this.runTillAccuracy(this.IDEAL_MIN_ACCURACY);
     }
     
-    
+    /**
+     * Runs the program for a set number of iterations
+     * @param count
+     * @throws ListLengthsDifferentException 
+     */
     public void run(int count) throws ListLengthsDifferentException{
         while(count-- > 0){
             this.runNewGeneration();

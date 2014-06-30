@@ -9,15 +9,16 @@ import java.util.Random;
  * @author Appurv Jain and Amrith Akula
  */
 public class DiffEvolutionGen {
+        
     public static final double MIN_VAL = 0.000000000000001;
     public static final double OFFSET = 0.1;
-    public static final int POPULATION_SIZE = 25;
+    public static final int POPULATION_SIZE = 300;
     public static final double MAX_JUMP = 0.5;
-    public static final double MUTATION_PROB = 0.2;
+    public static final double MUTATION_PROB = 0.20;
     
     private int[] layerSize;
     private Random randGen = new Random();
-    private Random mutationGen = new Random();
+    private Random mutationGen = new Random(System.nanoTime());
     
     private ArrayList<ArrayList<ArrayList<ArrayList<Double>>>> population
             = new ArrayList<ArrayList<ArrayList<ArrayList<Double>>>> (POPULATION_SIZE);
@@ -36,7 +37,9 @@ public class DiffEvolutionGen {
     }
 
     
-    
+    /**
+     * Getter for current population 
+     */
     ArrayList<ArrayList<ArrayList<ArrayList<Double>>>> getCurrPopulation() {
         return this.population;
     }
@@ -44,7 +47,7 @@ public class DiffEvolutionGen {
 
     /**
      * Generate a new generation from the current population
-     * @return 
+     * @return list of all individuals in new generation 
      */
     public ArrayList<ArrayList<ArrayList<ArrayList<Double>>>>
             generateNewGen(){
@@ -56,6 +59,10 @@ public class DiffEvolutionGen {
     }
 
 
+    /**
+     * Generate a random individual in in the population. Uses PRNGs.
+     * @return random Individual
+     */
     private ArrayList<ArrayList<ArrayList<Double>>> generateRandomIndividual(){
         ArrayList<ArrayList<ArrayList<Double>>> newIndiv;
         newIndiv = new ArrayList<ArrayList<ArrayList<Double>>>(this.layerSize.length);
@@ -89,13 +96,12 @@ public class DiffEvolutionGen {
     
     
     /**
-     * Generates a new individial 'close' to the parent in features. 
-     * @param parent
-     * @return 
+     * Generates a new individual 'close' to the parent in features(values). 
+     * @param parent: individual from which the child will be generated
      */
     private ArrayList<ArrayList<ArrayList<Double>>> 
             generateChild(ArrayList<ArrayList<ArrayList<Double>>> parent){
-        if(mutationGen.nextDouble() < DiffEvolutionGen.MUTATION_PROB)
+        if(this.shouldMutate())
             return this.generateRandomIndividual();
         ArrayList<ArrayList<ArrayList<Double>>> child
                 = new ArrayList<ArrayList<ArrayList<Double>>>(parent.size());
@@ -124,7 +130,22 @@ public class DiffEvolutionGen {
         }
         return child;       
     }
+    
+    
+    /**
+     * Used to decide if mutation should occur
+     * @return true if mutation should take place, else false
+     */
+    public boolean shouldMutate(){
+        return mutationGen.nextDouble() < DiffEvolutionGen.MUTATION_PROB;
+    }
 
+    /**
+     * Swaps the particular individual in the population with the individual
+     * passed in
+     * @param i: Index of the individual to be replaced
+     * @param newIndiv: The new individual that will replace current at the index 
+     */
     void replaceIndiv(int i, ArrayList<ArrayList<ArrayList<Double>>> newIndiv) {
         this.population.set(i, newIndiv);
     }

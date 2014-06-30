@@ -14,7 +14,13 @@ public class HiddenNeuron extends SpikeNeuron{
     protected double internalPotential = 0;
     public static final int OTHER_PARAMS = 3;
     
-    
+    /**
+     * Constructor: Initializes the neuron based on parameters passed in
+     * @param step: step value for decay
+     * @param preNeurons: neurons that connect to this neuron and feed it
+     * @param layer: Layer number of neuron
+     * @param neuron: position of neuron in layer
+     */
     public HiddenNeuron(double step, ArrayList<SpikeNeuron> preNeurons, 
             int layer, int neuron) {  
         

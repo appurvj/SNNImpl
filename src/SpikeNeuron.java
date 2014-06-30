@@ -19,6 +19,14 @@ public abstract class SpikeNeuron{
     protected final int layerNo;
     protected final int neuronNo;
     public boolean spiked = false;
+    
+    /**
+     * Constructor: Sets internal parameters
+     * @param nType: type of neuron
+     * @param step: step for time decay
+     * @param layer: neuron layer number
+     * @param neuron: position of number in neuron
+     */
 
     public SpikeNeuron(SNType nType, double step, int layer, int neuron){
         neuronType = nType; 

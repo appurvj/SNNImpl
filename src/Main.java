@@ -15,22 +15,20 @@ import java.util.Set;
  * @author Appurv Jain ans Amrith Akula
  */
 public class Main {    
-    static int[] hiddenLayerSize = {5};
+    static int[] hiddenLayerSize = {3,6,3};
     static int totalSize = hiddenLayerSize.length + 2; //a layer each for input and output
     static int[] layerSize = new int[totalSize];
     static int NO_OF_RUNS = 30000;
     static double MIN_ACCURACY = 0.75;
     static String dataFolder = "/Users/Appurv_Air/Dropbox/Coursework/CurrentCourses/AI/SNNCode/SNNImpl/src/";
-    static String dataLocn = "TelaguVowel.txt";//"irisModified.data";
-    static int CLASSIFIER_COL = 0;
-    static double TRAINING_RATIO = 0.6;
-    public static long time;
+    static String dataLocn = "haberman.data";
+    static int CLASSIFIER_COL = 3;
+    static double TRAINING_RATIO = 0.70;
+    static long time;
     
     
     public static void main(String[] args){ 
-        try{
-            
-            
+        try{           
             Data data = new Data(Main.dataFolder + Main.dataLocn , CLASSIFIER_COL, TRAINING_RATIO); 
             Main.layerSize[0] = data.totalInputCols;
             for(int i = 1; i <= hiddenLayerSize.length; i++)
@@ -39,37 +37,44 @@ public class Main {
             for(int value: data.trainingClass)
                 trainingClassSet.add(value);
             int classSetSize = trainingClassSet.size();
+//for debugging purposes
 System.out.println("Number of Classes: " + classSetSize);
             Main.layerSize[totalSize - 1] = classSetSize;
             SNNLearningController classifier = new SNNLearningController(Main.layerSize, data);
             Main.time = System.currentTimeMillis();
             //classifier.run(NO_OF_RUNS);
-            classifier.runTillAccuracy(MIN_ACCURACY);
-   
-            Toolkit.getDefaultToolkit().beep();
-            System.out.println("Training Accuracy: " + classifier.getBestAccuracy());
-            System.out.println("Test Accuracy: " + classifier.getTestAccuracy(classifier.getBestIndiv()));
-            long runTime = (System.currentTimeMillis() - time)/1000;
-            System.out.print("Time Taken : " );
-            if(runTime > 3600)
-                System.out.printf("%.3f hours\n", runTime/(3600));
-            else if(runTime > 60)
-                System.out.printf("%.3f minutes\n" ,runTime/60);
-            else
-                System.out.printf( "%.3f seconds\n",runTime);
-       
+            classifier.runTillAccuracy(0.85);
+            //classifier.runForMins(20);
             
+            System.out.println("Training Accuracy: " + classifier.getBestAccuracy() +
+              "\nTest Accuracy: " + classifier.getTestAccuracy(classifier.getBestIndiv()));
             
+            Main.displayTime((double)(System.currentTimeMillis() - Main.time)/1000);
             
+for(int i = 0; i < 20;i++){
+    Toolkit.getDefaultToolkit().beep();
+    Thread.sleep(40);
+}
         }catch(ListLengthsDifferentException e){
             System.out.println(e.getMessage());
-            e.printStackTrace();
-        }catch(NumberFormatException n){
-            System.out.println("Number Format excep caught!\n" + n.getMessage());
-            n.printStackTrace();           
+            e.printStackTrace();          
         }catch(Exception g){
             System.out.println("Exception Called in main: " + g.getClass());
             g.printStackTrace();
         }
    }
+    
+    /**
+     * Displays time taken, choosing unit based on size
+     * @param runTime 
+     */
+    public static void displayTime(double runTime){
+        System.out.print("Time Taken : " );
+        if(runTime > 3600)
+            System.out.printf("%.3f hours\n", runTime/(3600));
+        else if(runTime > 60)
+            System.out.printf("%.3f minutes\n" ,runTime/60);
+        else
+            System.out.printf( "%.3f seconds\n",runTime);
+    }
 }

@@ -10,14 +10,15 @@ import java.util.ArrayList;
  * @author Appurv Jain and  Amrith Akula
  */
 public class SNClassifierNetwork {
-    //Network in the form of a list of arrays is cleaner than a single list
-    //Each array list will represent a layer (input/hidden/output)
+    
     
     public static final double STEP = 0.5;
     public static final int INPUT_LAYER_INDEX = 0;
     public final int OUTPUT_LAYER;
     public static final int MAX_ITERATIONS = 250;
     
+    //Network in the form of a list of lists is cleaner than a single list
+    //Each array list will represent a layer (input/hidden/output)
     //List of lists - will include the weights and threshholds
     private ArrayList<ArrayList<SpikeNeuron>> network; 
     
@@ -57,7 +58,11 @@ public class SNClassifierNetwork {
     }
     
     
-    
+    /**
+     * Setter for particular layer
+     * @param input
+     * @throws ListLengthsDifferentException 
+     */
     private void setInputs(double[] input) throws ListLengthsDifferentException{
         ArrayList<SpikeNeuron> inputLayer = this.network.get(INPUT_LAYER_INDEX);
         if(input.length != inputLayer.size())
@@ -71,7 +76,8 @@ public class SNClassifierNetwork {
     /*
      * Set the paramaters of the the network
      */
-    public void setParams(ArrayList<ArrayList<ArrayList<Double>>> params)throws ListLengthsDifferentException{
+    public void setParams(ArrayList<ArrayList<ArrayList<Double>>> params)
+            throws ListLengthsDifferentException{
         for(int i = 0; i < params.size(); i++){
             for(int j = 0; j < params.get(i).size(); j++){
                 try{
@@ -119,7 +125,9 @@ public class SNClassifierNetwork {
         return -1;   
     }
     
-    
+    /**
+     * Reset each neuron in network
+     */
     public void reset(){
         for(ArrayList<SpikeNeuron> layer: this.network){
             for(SpikeNeuron neuron: layer){

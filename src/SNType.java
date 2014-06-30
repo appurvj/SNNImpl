@@ -1,6 +1,6 @@
 
 /**
- * This enum just lists the various types of neurons that make up a network
+ * This enumerator just lists the various types of neurons that make up a network
  * @author Appurv Jain and Amrith Akula
  */
 public enum SNType {

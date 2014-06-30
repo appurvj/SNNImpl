@@ -12,6 +12,10 @@ import java.util.ArrayList;
  * @author Appurv Jain and Amrith Akula
  */
 public class OutputNeuron extends HiddenNeuron {    
+    
+    /**
+     * Constructor 
+     */
     public OutputNeuron(double step, ArrayList<SpikeNeuron> preNeurons, 
              int layer, int neuron){
 
@@ -21,6 +25,9 @@ public class OutputNeuron extends HiddenNeuron {
     }
     
 @Override
+    /**
+     * Updates weights and checks if neuron has spiked
+     */
     public void update(){
         for(int i = 0; i < this.weightList.size(); i++){
             this.internalPotential += this.weightList.get(i)
